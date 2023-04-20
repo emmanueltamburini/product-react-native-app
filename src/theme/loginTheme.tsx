@@ -65,4 +65,7 @@ export const loginStyles = (theme: ThemeState, dimensions: ScaledSize) =>
     logoContainer: {
       flex: bigWidthScreen(dimensions) ? 0.4 : undefined,
     },
+    buttonText: {
+      color: theme.colors.background,
+    },
   });

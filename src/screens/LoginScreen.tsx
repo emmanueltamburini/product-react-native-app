@@ -57,13 +57,14 @@ export const LoginScreen = () => {
             underlineColorAndroid={theme.colors.background}
             autoCapitalize="none"
             autoCorrect={false}
-            keyboardType="visible-password"
+            secureTextEntry
           />
           <View style={loginStyle.buttonContainer}>
             <ThemeButton
               ignoreTheme
               title="Login"
               style={loginStyle.button}
+              textStyle={loginStyle.buttonText}
               onPress={console.log}
             />
           </View>
