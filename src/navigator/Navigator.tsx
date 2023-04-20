@@ -1,15 +1,15 @@
 import React, {useContext} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {HomeScreen} from '../screens/HomeScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {ThemeContext} from '../context/ThemeContext';
-import {TestScreen} from '../screens/TestScreen';
-import {PermissionScreen} from '../screens/PermissionScreen';
+import {LoginScreen} from '../screens/LoginScreen';
+import {RegisterScreen} from '../screens/RegisterScreen';
+import {ProtectedScreen} from '../screens/ProtectedScreen';
 
 export type RootStackParams = {
-  HomeScreen: undefined;
-  TestScreen: undefined;
-  PermissionScreen: undefined;
+  LoginScreen: undefined;
+  RegisterScreen: undefined;
+  ProtectedScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParams>();
@@ -20,13 +20,13 @@ export const Navigator = () => {
   return (
     <NavigationContainer theme={theme}>
       <Stack.Navigator
-        initialRouteName="HomeScreen"
+        initialRouteName="LoginScreen"
         screenOptions={{
           headerShown: false,
         }}>
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="TestScreen" component={TestScreen} />
-        <Stack.Screen name="PermissionScreen" component={PermissionScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        <Stack.Screen name="ProtectedScreen" component={ProtectedScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
