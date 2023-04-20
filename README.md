@@ -2,7 +2,7 @@
 
 ## ProductApp README
 
-This application has designed to create a basic configuration app to start any project from this app. It has a stack navigator, Icons, ThemeContext and some useful components and hooks.
+This application has designed to simulate a basic product app, this app handle login with JWT and register system with petitions to a nodejs backend (you can find this backend [here](https://github.com/emmanueltamburini/restserver-nodejs-app)). Also it handles all the crud of products with camera and gallery system to upload photos.
 
 ### Getting started
 
