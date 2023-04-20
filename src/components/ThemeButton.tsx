@@ -24,7 +24,7 @@ export const ThemeButton = ({
 
   return (
     <TouchableOpacity
-      activeOpacity={0.9}
+      activeOpacity={0.8}
       onPress={onPress}
       style={styles.container}>
       <ThemeText ignoreTheme style={styles.text}>
