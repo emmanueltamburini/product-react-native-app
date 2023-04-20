@@ -1,20 +1,23 @@
 import {ScaledSize, StyleSheet} from 'react-native';
 import {ThemeState} from '../context/themeReducer';
+import {bigWidthScreen} from '../helpers/utils';
 
 export const loginStyles = (theme: ThemeState, dimensions: ScaledSize) =>
   StyleSheet.create({
     formContainer: {
       flex: 1,
-      paddingHorizontal: dimensions.width >= 650 ? 200 : 30,
-      justifyContent: 'center',
+      paddingHorizontal: bigWidthScreen(dimensions) ? 50 : 30,
+      justifyContent: bigWidthScreen(dimensions) ? 'space-around' : 'center',
       height: 600,
+      marginTop: bigWidthScreen(dimensions) ? 20 : 0,
       marginBottom: 50,
+      flexDirection: bigWidthScreen(dimensions) ? 'row' : 'column',
     },
     title: {
       color: theme.colors.background,
       fontSize: 30,
       fontWeight: 'bold',
-      marginTop: dimensions.width >= 650 ? 0 : 20,
+      marginTop: bigWidthScreen(dimensions) ? 0 : 20,
     },
     label: {
       marginTop: 25,
@@ -32,7 +35,7 @@ export const loginStyles = (theme: ThemeState, dimensions: ScaledSize) =>
     },
     buttonContainer: {
       alignItems: 'center',
-      marginTop: dimensions.width >= 650 ? 25 : 50,
+      marginTop: bigWidthScreen(dimensions) ? 30 : 50,
     },
     button: {
       borderWidth: 2,
@@ -43,7 +46,7 @@ export const loginStyles = (theme: ThemeState, dimensions: ScaledSize) =>
     },
     newUserContainer: {
       alignItems: 'flex-end',
-      marginTop: dimensions.width >= 650 ? 5 : 10,
+      marginTop: 10,
     },
     newAccountButton: {
       borderColor: theme.colors.primary,
@@ -54,5 +57,12 @@ export const loginStyles = (theme: ThemeState, dimensions: ScaledSize) =>
     text: {
       color: theme.colors.background,
       fontSize: 18,
+    },
+    inputsContainer: {
+      flex: bigWidthScreen(dimensions) ? 0.6 : undefined,
+      paddingHorizontal: bigWidthScreen(dimensions) ? 50 : 0,
+    },
+    logoContainer: {
+      flex: bigWidthScreen(dimensions) ? 0.4 : undefined,
     },
   });

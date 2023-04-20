@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {View, StyleSheet, useWindowDimensions, ScaledSize} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import {ThemeState} from '../context/themeReducer';
+import {bigWidthScreen} from '../helpers/utils';
 
 export const Background = () => {
   const {theme} = useContext(ThemeContext);
@@ -12,14 +13,16 @@ export const Background = () => {
 };
 
 const stylesFunction = (theme: ThemeState, dimensions: ScaledSize) => {
-  const width =
-    dimensions.width >= 650 ? dimensions.width * 1.4 : dimensions.width * 2.1;
-  const height =
-    dimensions.width >= 650 ? dimensions.height * 2.4 : dimensions.height * 1.4;
+  const width = bigWidthScreen(dimensions)
+    ? dimensions.width * 1.4
+    : dimensions.width * 2.1;
+  const height = bigWidthScreen(dimensions)
+    ? dimensions.height * 2.4
+    : dimensions.height * 1.4;
 
-  const rotate = dimensions.width >= 650 ? '-150deg' : '-60deg';
-  const top = dimensions.width >= 650 ? -550 : -250;
-  const right = dimensions.width >= 650 ? -300 : undefined;
+  const rotate = bigWidthScreen(dimensions) ? '-150deg' : '-60deg';
+  const top = bigWidthScreen(dimensions) ? -550 : -250;
+  const right = bigWidthScreen(dimensions) ? -300 : undefined;
 
   return StyleSheet.create({
     container: {

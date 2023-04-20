@@ -1,12 +1,18 @@
 import React, {useContext} from 'react';
-import {View, StyleSheet, useWindowDimensions, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  useWindowDimensions,
+  Image,
+  ScaledSize,
+} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
+import {bigWidthScreen} from '../helpers/utils';
 
 export const Logo = () => {
   const {theme} = useContext(ThemeContext);
   const dimensions = useWindowDimensions();
-  console.log(dimensions);
-  const styles = stylesFunction();
+  const styles = stylesFunction(dimensions);
 
   const image = theme.dark
     ? require('../assets/react-logo-black.png')
@@ -19,10 +25,12 @@ export const Logo = () => {
   );
 };
 
-const stylesFunction = () => {
+const stylesFunction = (dimensions: ScaledSize) => {
   return StyleSheet.create({
     container: {
       alignItems: 'center',
+      marginTop: bigWidthScreen(dimensions) ? 60 : 0,
+      right: bigWidthScreen(dimensions) ? 50 : undefined,
     },
     image: {
       width: 110,
