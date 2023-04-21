@@ -4,6 +4,9 @@ import {bigWidthScreen} from '../helpers/utils';
 
 export const loginStyles = (theme: ThemeState, dimensions: ScaledSize) =>
   StyleSheet.create({
+    keyboardAvoidingView: {
+      flex: 1,
+    },
     formContainer: {
       flex: 1,
       paddingHorizontal: bigWidthScreen(dimensions) ? 50 : 30,
