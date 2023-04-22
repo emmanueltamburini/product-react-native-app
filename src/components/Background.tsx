@@ -4,12 +4,20 @@ import {ThemeContext} from '../context/ThemeContext';
 import {ThemeState} from '../context/themeReducer';
 import {bigWidthScreen} from '../helpers/utils';
 
-export const Background = () => {
+interface Props {
+  allColor?: boolean;
+}
+
+export const Background = ({allColor}: Props) => {
   const {theme} = useContext(ThemeContext);
   const dimensions = useWindowDimensions();
   const styles = stylesFunction(theme, dimensions);
 
-  return <View style={styles.container} />;
+  return allColor ? (
+    <View style={styles.containerAllColor} />
+  ) : (
+    <View style={styles.container} />
+  );
 };
 
 const stylesFunction = (theme: ThemeState, dimensions: ScaledSize) => {
@@ -25,6 +33,12 @@ const stylesFunction = (theme: ThemeState, dimensions: ScaledSize) => {
   const right = bigWidthScreen(dimensions) ? -300 : undefined;
 
   return StyleSheet.create({
+    containerAllColor: {
+      position: 'absolute',
+      backgroundColor: theme.colors.primary,
+      width,
+      height,
+    },
     container: {
       position: 'absolute',
       backgroundColor: theme.colors.primary,
