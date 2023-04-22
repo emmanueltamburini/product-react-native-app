@@ -5,6 +5,7 @@ import {ThemeContext} from '../context/ThemeContext';
 import {LoginScreen} from '../screens/LoginScreen';
 import {RegisterScreen} from '../screens/RegisterScreen';
 import {ProtectedScreen} from '../screens/ProtectedScreen';
+import {AuthContext} from '../context/AuthContext';
 
 export type RootStackParams = {
   LoginScreen: undefined;
@@ -16,17 +17,25 @@ const Stack = createStackNavigator<RootStackParams>();
 
 export const Navigator = () => {
   const {theme} = useContext(ThemeContext);
+  const {status} = useContext(AuthContext);
 
   return (
     <NavigationContainer theme={theme}>
       <Stack.Navigator
-        initialRouteName="LoginScreen"
+        initialRouteName={
+          status !== 'authenticated' ? 'LoginScreen' : 'ProtectedScreen'
+        }
         screenOptions={{
           headerShown: false,
         }}>
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-        <Stack.Screen name="ProtectedScreen" component={ProtectedScreen} />
+        {status !== 'authenticated' ? (
+          <>
+            <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+          </>
+        ) : (
+          <Stack.Screen name="ProtectedScreen" component={ProtectedScreen} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

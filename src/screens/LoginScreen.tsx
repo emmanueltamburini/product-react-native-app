@@ -1,5 +1,6 @@
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -17,23 +18,36 @@ import {ThemeButton} from '../components/ThemeButton';
 import {useForm} from '../hooks/useForm';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParams} from '../navigator/Navigator';
+import {AuthContext} from '../context/AuthContext';
 
 interface Props extends StackScreenProps<RootStackParams, 'LoginScreen'> {}
 
 export const LoginScreen = ({navigation}: Props) => {
   const {theme} = useContext(ThemeContext);
+  const {signIn, errorMessage, removeError} = useContext(AuthContext);
   const dimensions = useWindowDimensions();
+
   const passwordInputRef = useRef<TextInput>();
+  const removeErrorStatic = useRef(removeError);
 
   const {email, password, onChange} = useForm({
     email: '',
     password: '',
   });
 
+  useEffect(() => {
+    if (errorMessage.length === 0) {
+      return;
+    }
+
+    Alert.alert('Bad Login', errorMessage, [
+      {text: 'ok', onPress: removeErrorStatic.current},
+    ]);
+  }, [errorMessage]);
+
   const onLogin = () => {
-    console.log(email, password);
     Keyboard.dismiss();
-    navigation.navigate('ProtectedScreen');
+    signIn({email, password});
   };
 
   const newAccount = () => {
@@ -80,7 +94,11 @@ export const LoginScreen = ({navigation}: Props) => {
               Password
             </ThemeText>
             <TextInput
-              ref={ref => (ref ? (passwordInputRef.current = ref) : null)}
+              ref={ref => {
+                if (ref) {
+                  passwordInputRef.current = ref;
+                }
+              }}
               placeholder="******"
               placeholderTextColor={theme.opacityColor}
               style={[

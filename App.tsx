@@ -3,6 +3,7 @@ import React from 'react';
 import {Navigator} from './src/navigator/Navigator';
 import {ThemeProvider} from './src/context/ThemeContext';
 import {PermissionProvider} from './src/context/PermissionContext';
+import {AuthProvider} from './src/context/AuthContext';
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -19,7 +20,9 @@ export const App = () => {
 const AppState = ({children}: Props) => {
   return (
     <PermissionProvider>
-      <ThemeProvider>{children}</ThemeProvider>
+      <ThemeProvider>
+        <AuthProvider>{children}</AuthProvider>
+      </ThemeProvider>
     </PermissionProvider>
   );
 };

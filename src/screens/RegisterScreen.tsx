@@ -102,7 +102,11 @@ export const RegisterScreen = ({navigation}: Props) => {
               Password
             </ThemeText>
             <TextInput
-              ref={ref => (ref ? (passwordInputRef.current = ref) : null)}
+              ref={ref => {
+                if (ref) {
+                  passwordInputRef.current = ref;
+                }
+              }}
               placeholder="******"
               placeholderTextColor={theme.opacityColor}
               style={[
