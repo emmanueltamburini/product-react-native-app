@@ -2,7 +2,7 @@ import React, {createContext, useEffect, useMemo, useReducer} from 'react';
 import {LoginData, LoginResponse, User} from '../interfaces/appInterfaces';
 import {AuthState, authReducer} from './authReducer';
 import productApi from '../api/productApi';
-import {getData, storeData} from '../helpers/utils';
+import {getData, removeData, storeData} from '../helpers/utils';
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -55,11 +55,19 @@ export const AuthProvider = ({children}: Props) => {
         const {token, user} = data;
 
         dispatch({type: 'SIGN_IN', payload: {token, user}});
+        if (!(await storeData('token', data.token))) {
+          dispatch({
+            type: 'ADD_ERROR',
+            payload: 'Please check your device space',
+          });
+        }
       } catch (error) {
         console.log(error);
+        removeData('token');
         dispatch({type: 'NOT_AUTHENTICATED'});
       }
     } else {
+      removeData('token');
       dispatch({type: 'NOT_AUTHENTICATED'});
     }
   };

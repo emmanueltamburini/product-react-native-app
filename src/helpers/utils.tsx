@@ -49,3 +49,13 @@ export const getObjectData = async (key: string): Promise<object | null> => {
     return null;
   }
 };
+
+export const removeData = async (key: string): Promise<boolean> => {
+  try {
+    await AsyncStorage.removeItem(key);
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
