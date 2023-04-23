@@ -18,3 +18,4 @@ This project use the following dependencies:
 - [React Navigation - Stack navigator](<https://reactnavigation.org/docs/stack-navigator/>)
 - [React Native Vector Icons](<https://github.com/oblador/react-native-vector-icons>)
 - [React Native Permissions](<https://www.npmjs.com/package/react-native-permissions>)
+- [React Native Async Storage](<https://react-native-async-storage.github.io/async-storage/docs/install/>)

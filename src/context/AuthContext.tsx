@@ -1,7 +1,8 @@
-import React, {createContext, useMemo, useReducer} from 'react';
+import React, {createContext, useEffect, useMemo, useReducer} from 'react';
 import {LoginData, LoginResponse, User} from '../interfaces/appInterfaces';
 import {AuthState, authReducer} from './authReducer';
 import productApi from '../api/productApi';
+import {getData, storeData} from '../helpers/utils';
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -41,6 +42,28 @@ const authInitialState: AuthState = {
 export const AuthProvider = ({children}: Props) => {
   const [auth, dispatch] = useReducer(authReducer, authInitialState);
 
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  const loadUser = async () => {
+    const currentToken = await getData('token');
+
+    if (currentToken) {
+      try {
+        const {data} = await productApi.get<LoginResponse>('/auth');
+        const {token, user} = data;
+
+        dispatch({type: 'SIGN_IN', payload: {token, user}});
+      } catch (error) {
+        console.log(error);
+        dispatch({type: 'NOT_AUTHENTICATED'});
+      }
+    } else {
+      dispatch({type: 'NOT_AUTHENTICATED'});
+    }
+  };
+
   const signIn = async (body: LoginData) => {
     try {
       const {data} = await productApi.post<LoginResponse>('/auth/login', body);
@@ -48,6 +71,13 @@ export const AuthProvider = ({children}: Props) => {
       const {token, user} = data;
 
       dispatch({type: 'SIGN_IN', payload: {token, user}});
+
+      if (!(await storeData('token', data.token))) {
+        dispatch({
+          type: 'ADD_ERROR',
+          payload: 'Please check your device space',
+        });
+      }
     } catch (error) {
       const errorMessage: string = ((error as any).response?.data?.msg ||
         'Bad information') as string;
