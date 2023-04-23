@@ -1,5 +1,10 @@
 import React, {createContext, useEffect, useMemo, useReducer} from 'react';
-import {LoginData, LoginResponse, User} from '../interfaces/appInterfaces';
+import {
+  LoginData,
+  LoginResponse,
+  RegisterData,
+  User,
+} from '../interfaces/appInterfaces';
 import {AuthState, authReducer} from './authReducer';
 import productApi from '../api/productApi';
 import {getData, removeData, storeData} from '../helpers/utils';
@@ -13,8 +18,8 @@ interface ContextProps {
   token?: string;
   user?: User;
   status: 'checking' | 'authenticated' | 'not-authenticated';
-  signUp: () => void;
-  signIn: (data: LoginData) => void;
+  signUp: (body: RegisterData) => void;
+  signIn: (body: LoginData) => void;
   logout: () => void;
   removeError: () => void;
 }
@@ -88,12 +93,33 @@ export const AuthProvider = ({children}: Props) => {
       }
     } catch (error) {
       const errorMessage: string = ((error as any).response?.data?.msg ||
+        (error as any).response?.data?.errors[0].msg ||
         'Bad information') as string;
       dispatch({type: 'ADD_ERROR', payload: errorMessage});
     }
   };
 
-  const signUp = () => {};
+  const signUp = async (body: RegisterData) => {
+    try {
+      const {data} = await productApi.post<LoginResponse>('/user', body);
+
+      const {token, user} = data;
+
+      dispatch({type: 'SIGN_UP', payload: {token, user}});
+
+      if (!(await storeData('token', data.token))) {
+        dispatch({
+          type: 'ADD_ERROR',
+          payload: 'Please check your device space',
+        });
+      }
+    } catch (error) {
+      const errorMessage: string = ((error as any).response?.data?.msg ||
+        (error as any).response?.data?.errors[0].msg ||
+        'Bad information') as string;
+      dispatch({type: 'ADD_ERROR', payload: errorMessage});
+    }
+  };
 
   const logout = () => {
     dispatch({type: 'LOGOUT'});

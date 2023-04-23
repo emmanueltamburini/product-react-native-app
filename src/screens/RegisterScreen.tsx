@@ -1,5 +1,6 @@
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -18,13 +19,17 @@ import {ThemeButton} from '../components/ThemeButton';
 import {useForm} from '../hooks/useForm';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParams} from '../navigator/Navigator';
+import {AuthContext} from '../context/AuthContext';
 
 interface Props extends StackScreenProps<RootStackParams, 'RegisterScreen'> {}
 
 export const RegisterScreen = ({navigation}: Props) => {
   const {theme} = useContext(ThemeContext);
   const dimensions = useWindowDimensions();
+  const {signUp, errorMessage, removeError} = useContext(AuthContext);
+
   const passwordInputRef = useRef<TextInput>();
+  const removeErrorStatic = useRef(removeError);
 
   const {name, email, password, onChange} = useForm({
     name: '',
@@ -32,10 +37,19 @@ export const RegisterScreen = ({navigation}: Props) => {
     password: '',
   });
 
+  useEffect(() => {
+    if (errorMessage.length === 0) {
+      return;
+    }
+
+    Alert.alert('Bad Register', errorMessage, [
+      {text: 'ok', onPress: removeErrorStatic.current},
+    ]);
+  }, [errorMessage]);
+
   const onRegister = () => {
-    console.log(email, password);
     Keyboard.dismiss();
-    navigation.navigate('ProtectedScreen');
+    signUp({name, email, password});
   };
 
   const newAccount = () => {
