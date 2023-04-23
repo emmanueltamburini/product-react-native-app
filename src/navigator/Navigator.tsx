@@ -4,14 +4,14 @@ import {NavigationContainer} from '@react-navigation/native';
 import {ThemeContext} from '../context/ThemeContext';
 import {LoginScreen} from '../screens/LoginScreen';
 import {RegisterScreen} from '../screens/RegisterScreen';
-import {ProtectedScreen} from '../screens/ProtectedScreen';
 import {AuthContext} from '../context/AuthContext';
 import {LoadingScreen} from '../screens/LoadingScreen';
+import {ProductsNavigator} from './ProductsNavigator';
 
 export type RootStackParams = {
   LoginScreen: undefined;
   RegisterScreen: undefined;
-  ProtectedScreen: undefined;
+  ProductsNavigator: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParams>();
@@ -28,7 +28,7 @@ export const Navigator = () => {
     <NavigationContainer theme={theme}>
       <Stack.Navigator
         initialRouteName={
-          status !== 'authenticated' ? 'LoginScreen' : 'ProtectedScreen'
+          status !== 'authenticated' ? 'LoginScreen' : 'ProductsNavigator'
         }
         screenOptions={{
           headerShown: false,
@@ -39,7 +39,10 @@ export const Navigator = () => {
             <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           </>
         ) : (
-          <Stack.Screen name="ProtectedScreen" component={ProtectedScreen} />
+          <Stack.Screen
+            name="ProductsNavigator"
+            component={ProductsNavigator}
+          />
         )}
       </Stack.Navigator>
     </NavigationContainer>

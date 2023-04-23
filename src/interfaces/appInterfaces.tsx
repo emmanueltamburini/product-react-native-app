@@ -1,13 +1,3 @@
-import {RootStackParams} from '../navigator/Navigator';
-
-type ComponentKey = keyof RootStackParams;
-
-export interface MenuItem {
-  name: string;
-  icon: string;
-  component: ComponentKey;
-}
-
 export interface LoginData {
   email: string;
   password: string;
@@ -18,6 +8,13 @@ export interface RegisterData {
   name: string;
   password: string;
 }
+
+export interface ProductData {
+  id?: string;
+  categoryId: string;
+  productName: string;
+}
+
 export interface LoginResponse {
   user: User;
   token: string;
@@ -31,4 +28,31 @@ export interface User {
   google: boolean;
   image: string;
   uid: string;
+}
+
+export interface ProductListResponse {
+  products: Product[];
+  total: number;
+}
+
+export interface Product {
+  name: string;
+  status: boolean;
+  user: User;
+  price: number;
+  category: Category;
+  available: boolean;
+  id: string;
+  image?: string;
+}
+
+export interface Category {
+  _id: string;
+  name: string;
+}
+
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
 }

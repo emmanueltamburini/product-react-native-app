@@ -4,6 +4,7 @@ import {Navigator} from './src/navigator/Navigator';
 import {ThemeProvider} from './src/context/ThemeContext';
 import {PermissionProvider} from './src/context/PermissionContext';
 import {AuthProvider} from './src/context/AuthContext';
+import {ProductProvider} from './src/context/ProductContext';
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -20,9 +21,11 @@ export const App = () => {
 const AppState = ({children}: Props) => {
   return (
     <PermissionProvider>
-      <ThemeProvider>
-        <AuthProvider>{children}</AuthProvider>
-      </ThemeProvider>
+      <ProductProvider>
+        <ThemeProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeProvider>
+      </ProductProvider>
     </PermissionProvider>
   );
 };
