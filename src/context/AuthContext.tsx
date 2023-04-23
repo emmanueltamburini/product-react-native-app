@@ -94,7 +94,12 @@ export const AuthProvider = ({children}: Props) => {
   };
 
   const signUp = () => {};
-  const logout = () => {};
+
+  const logout = () => {
+    dispatch({type: 'LOGOUT'});
+    removeData('token');
+  };
+
   const removeError = () => dispatch({type: 'REMOVE_ERROR'});
 
   const providerValue = useMemo(
