@@ -1,11 +1,21 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {StyleSheet, SafeAreaView, ActivityIndicator} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import {ThemeState} from '../context/themeReducer';
+import {StackScreenProps} from '@react-navigation/stack';
+import {ProductStackParams} from '../navigator/ProductsNavigator';
 
-export const ProductScreen = () => {
+interface Props extends StackScreenProps<ProductStackParams, 'ProductScreen'> {}
+
+export const ProductScreen = ({navigation, route}: Props) => {
   const {theme} = useContext(ThemeContext);
   const styles = stylesFunction(theme);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: route.params.name ? route.params.name : 'New Product',
+    });
+  }, [navigation, route]);
 
   return (
     <SafeAreaView style={styles.container}>
