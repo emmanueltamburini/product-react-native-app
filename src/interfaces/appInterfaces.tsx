@@ -46,12 +46,29 @@ export interface Product {
   image?: string;
 }
 
-export interface Category {
-  _id: string;
-  name: string;
+export interface ProductResponse {
+  product: Product;
 }
 
-export interface User {
+export interface Category {
+  name: string;
+  status: boolean;
+  user?: User;
+  id?: string;
+  _id?: string;
+}
+
+export interface CreatedBy {
+  _id: string;
+  name: string;
+  email: string;
+}
+export interface CategoryListResponse {
+  categories: Category[];
+  total: number;
+}
+
+export interface CreatedBy {
   _id: string;
   name: string;
   email: string;

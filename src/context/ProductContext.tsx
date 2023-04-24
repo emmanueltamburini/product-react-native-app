@@ -9,6 +9,7 @@ import {
   Product,
   ProductData,
   ProductListResponse,
+  ProductResponse,
 } from '../interfaces/appInterfaces';
 import productApi from '../api/productApi';
 
@@ -22,7 +23,7 @@ interface ContextProps {
   addProducts: (product: ProductData) => Promise<void>;
   updateProducts: (product: ProductData) => Promise<void>;
   deleteProducts: (id: string) => Promise<void>;
-  loadProduct: (id: string) => Promise<Product>;
+  loadProduct: (id: string) => Promise<Product | null>;
   uploadImage: (data: any, id: string) => Promise<void>;
 }
 
@@ -70,8 +71,15 @@ export const ProductProvider = ({children}: Props) => {
   const addProducts = async (product: ProductData) => {};
   const updateProducts = async (product: ProductData) => {};
   const deleteProducts = async (id: string) => {};
-  const loadProduct = async (id: string) => {
-    throw new Error('Not implemeted');
+  const loadProduct = async (id: string): Promise<Product | null> => {
+    try {
+      const response = await productApi.get<ProductResponse>(`/product/${id}`);
+
+      return response.data.product;
+    } catch (error) {
+      console.log('=== ProductContext.tsx [80] ===', error);
+      return null;
+    }
   };
   const uploadImage = async (data: any, id: string) => {};
 

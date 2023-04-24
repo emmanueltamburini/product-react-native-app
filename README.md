@@ -19,3 +19,4 @@ This project use the following dependencies:
 - [React Native Vector Icons](<https://github.com/oblador/react-native-vector-icons>)
 - [React Native Permissions](<https://www.npmjs.com/package/react-native-permissions>)
 - [React Native Async Storage](<https://react-native-async-storage.github.io/async-storage/docs/install/>)
+- [React Native Async Storage](<https://www.npmjs.com/package/@react-native-picker/picker/>)

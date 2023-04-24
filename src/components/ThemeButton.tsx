@@ -11,7 +11,7 @@ import {ThemeContext} from '../context/ThemeContext';
 import {ThemeState} from '../context/themeReducer';
 
 interface Props {
-  title: string;
+  title: string | React.ReactNode;
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
   ignoreTheme?: boolean;
@@ -41,7 +41,7 @@ export const ThemeButton = ({
       activeOpacity={0.8}
       onPress={onPress}
       style={styles.container}>
-      <ThemeText ignoreTheme style={styles.text}>
+      <ThemeText ignoreTheme={ignoreTheme} style={styles.text}>
         {title}
       </ThemeText>
     </TouchableOpacity>
