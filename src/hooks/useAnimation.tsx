@@ -10,7 +10,7 @@ export const useAnimation = () => {
       toValue: 1,
       duration,
       useNativeDriver: true,
-    }).start(() => console.log('FadeIn animation finished'));
+    }).start();
   };
 
   const fadeOut = () => {
@@ -18,13 +18,13 @@ export const useAnimation = () => {
       toValue: 0,
       duration: 300,
       useNativeDriver: true,
-    }).start(() => console.log('FadeOut animation finished'));
+    }).start();
 
     Animated.timing(position, {
       toValue: -100,
       duration: 1000,
       useNativeDriver: true,
-    }).start(() => console.log('top animation finished'));
+    }).start();
   };
 
   const startMoving = (initPosition: number, duration: number = 300) => {

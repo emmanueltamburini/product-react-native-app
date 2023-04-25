@@ -8,6 +8,7 @@ import React, {
 import {
   Product,
   ProductData,
+  ProductInnerResponse,
   ProductListResponse,
   ProductResponse,
 } from '../interfaces/appInterfaces';
@@ -20,9 +21,10 @@ interface Props {
 interface ContextProps {
   products: Product[];
   loadProducts: () => Promise<void>;
-  addProducts: (product: ProductData) => Promise<void>;
-  updateProducts: (product: ProductData) => Promise<void>;
-  deleteProducts: (id: string) => Promise<void>;
+  refreshProducts: () => Promise<void>;
+  addProducts: (product: ProductData) => Promise<ProductInnerResponse>;
+  updateProducts: (product: ProductData) => Promise<ProductInnerResponse>;
+  deleteProducts: (id: string) => Promise<ProductInnerResponse>;
   loadProduct: (id: string) => Promise<Product | null>;
   uploadImage: (data: any, id: string) => Promise<void>;
 }
@@ -30,6 +32,7 @@ interface ContextProps {
 const providerValueDummy: ContextProps = {
   products: [],
   loadProducts: () => new Promise(() => {}),
+  refreshProducts: () => new Promise(() => {}),
   addProducts: () => new Promise(() => {}),
   updateProducts: () => new Promise(() => {}),
   deleteProducts: () => new Promise(() => {}),
@@ -68,9 +71,88 @@ export const ProductProvider = ({children}: Props) => {
     }
   };
 
-  const addProducts = async (product: ProductData) => {};
-  const updateProducts = async (product: ProductData) => {};
-  const deleteProducts = async (id: string) => {};
+  const refreshProducts = async () => {
+    try {
+      const response = await productApi.get<ProductListResponse>('/product', {
+        params: {page: 0, limit: 50},
+      });
+
+      if (
+        response.data.products.length > 0 &&
+        response.data.total > products.length
+      ) {
+        setProducts([...response.data.products]);
+
+        productPagination.current = 1;
+      }
+    } catch (error) {
+      console.log('=== ProductContext.tsx [59] ===', error);
+      setProducts([]);
+    }
+  };
+
+  const addProducts = async (product: ProductData) => {
+    try {
+      const response = await productApi.post<Product>('/product', {
+        ...product,
+        id: undefined,
+      });
+
+      setProducts(currentProducts => [...currentProducts, response.data]);
+      return {id: response.data.id};
+    } catch (error) {
+      console.log('=== ProductContext.tsx [81] ===', error);
+      const errorMessage = ((error as any).response?.data?.msg ||
+        (error as any).response?.data?.errors[0].msg ||
+        'Bad information') as string;
+
+      return {id: '', message: errorMessage};
+    }
+  };
+
+  const updateProducts = async (product: ProductData) => {
+    try {
+      const response = await productApi.put<Product>(`/product/${product.id}`, {
+        ...product,
+        id: undefined,
+      });
+
+      setProducts(currentProducts =>
+        currentProducts.map(currentProduct =>
+          currentProduct.id === response.data.id
+            ? response.data
+            : currentProduct,
+        ),
+      );
+      return {id: response.data.id};
+    } catch (error) {
+      console.log('=== ProductContext.tsx [98] ===', error);
+      const errorMessage = ((error as any).response?.data?.msg ||
+        (error as any).response?.data?.errors[0].msg ||
+        'Bad information') as string;
+      return {id: '', message: errorMessage};
+    }
+  };
+
+  const deleteProducts = async (id: string) => {
+    try {
+      console.log('=== ProductContext.tsx [117] ===', id);
+      await productApi.delete<Product>(`/product/${id}`);
+
+      setProducts(currentProducts =>
+        currentProducts.filter(currentProduct => currentProduct.id !== id),
+      );
+      return {id};
+    } catch (error) {
+      console.log('=== ProductContext.tsx [124] ===', error);
+      const errorMessage = ((error as any)?.response?.data ||
+        (error as any)?.response?.data?.msg ||
+        (error as any).response?.data?.errors[0].msg ||
+        'Bad information') as string;
+      return {id: '', message: errorMessage};
+    }
+  };
+
   const loadProduct = async (id: string): Promise<Product | null> => {
     try {
       const response = await productApi.get<ProductResponse>(`/product/${id}`);
@@ -84,6 +166,7 @@ export const ProductProvider = ({children}: Props) => {
   const uploadImage = async (data: any, id: string) => {};
 
   const loadProductsStatic = useRef(loadProducts);
+  const refreshProductsStatic = useRef(refreshProducts);
 
   useEffect(() => {
     loadProductsStatic.current();
@@ -92,7 +175,8 @@ export const ProductProvider = ({children}: Props) => {
   const providerValue = useMemo<ContextProps>(
     () => ({
       products,
-      loadProducts,
+      loadProducts: loadProductsStatic.current,
+      refreshProducts: refreshProductsStatic.current,
       addProducts,
       updateProducts,
       deleteProducts,

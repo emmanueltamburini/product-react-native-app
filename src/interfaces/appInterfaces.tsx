@@ -11,8 +11,8 @@ export interface RegisterData {
 
 export interface ProductData {
   id?: string;
-  categoryId: string;
-  productName: string;
+  category: string;
+  name: string;
 }
 
 export interface LoginResponse {
@@ -44,6 +44,11 @@ export interface Product {
   available: boolean;
   id: string;
   image?: string;
+}
+
+export interface ProductInnerResponse {
+  id: string;
+  message?: string;
 }
 
 export interface ProductResponse {
