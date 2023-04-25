@@ -13,6 +13,7 @@ import {
   ProductResponse,
 } from '../interfaces/appInterfaces';
 import productApi from '../api/productApi';
+import {ImagePickerResponse} from 'react-native-image-picker';
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -26,7 +27,7 @@ interface ContextProps {
   updateProducts: (product: ProductData) => Promise<ProductInnerResponse>;
   deleteProducts: (id: string) => Promise<ProductInnerResponse>;
   loadProduct: (id: string) => Promise<Product | null>;
-  uploadImage: (data: any, id: string) => Promise<void>;
+  uploadImage: (data: any, id: string) => Promise<ProductInnerResponse>;
 }
 
 const providerValueDummy: ContextProps = {
@@ -66,7 +67,7 @@ export const ProductProvider = ({children}: Props) => {
         productPagination.current += 1;
       }
     } catch (error) {
-      console.log('=== ProductContext.tsx [59] ===', error);
+      console.log(JSON.stringify(error));
       setProducts([]);
     }
   };
@@ -86,7 +87,7 @@ export const ProductProvider = ({children}: Props) => {
         productPagination.current = 1;
       }
     } catch (error) {
-      console.log('=== ProductContext.tsx [59] ===', error);
+      console.log(JSON.stringify(error));
       setProducts([]);
     }
   };
@@ -101,7 +102,7 @@ export const ProductProvider = ({children}: Props) => {
       setProducts(currentProducts => [...currentProducts, response.data]);
       return {id: response.data.id};
     } catch (error) {
-      console.log('=== ProductContext.tsx [81] ===', error);
+      console.log(JSON.stringify(error));
       const errorMessage = ((error as any).response?.data?.msg ||
         (error as any).response?.data?.errors[0].msg ||
         'Bad information') as string;
@@ -126,7 +127,7 @@ export const ProductProvider = ({children}: Props) => {
       );
       return {id: response.data.id};
     } catch (error) {
-      console.log('=== ProductContext.tsx [98] ===', error);
+      console.log(JSON.stringify(error));
       const errorMessage = ((error as any).response?.data?.msg ||
         (error as any).response?.data?.errors[0].msg ||
         'Bad information') as string;
@@ -136,7 +137,6 @@ export const ProductProvider = ({children}: Props) => {
 
   const deleteProducts = async (id: string) => {
     try {
-      console.log('=== ProductContext.tsx [117] ===', id);
       await productApi.delete<Product>(`/product/${id}`);
 
       setProducts(currentProducts =>
@@ -144,7 +144,7 @@ export const ProductProvider = ({children}: Props) => {
       );
       return {id};
     } catch (error) {
-      console.log('=== ProductContext.tsx [124] ===', error);
+      console.log(JSON.stringify(error));
       const errorMessage = ((error as any)?.response?.data ||
         (error as any)?.response?.data?.msg ||
         (error as any).response?.data?.errors[0].msg ||
@@ -159,11 +159,52 @@ export const ProductProvider = ({children}: Props) => {
 
       return response.data.product;
     } catch (error) {
-      console.log('=== ProductContext.tsx [80] ===', error);
+      console.log(JSON.stringify(error));
       return null;
     }
   };
-  const uploadImage = async (data: any, id: string) => {};
+
+  const uploadImage = async (data: ImagePickerResponse, id: string) => {
+    let body;
+
+    if (data.assets) {
+      body = {
+        uri: data.assets[0].uri,
+        type: data.assets[0].type,
+        name: data.assets[0].fileName,
+      };
+    }
+
+    const formData = new FormData();
+    formData.append('file', body);
+
+    try {
+      const response = await productApi.put<Product>(
+        `/upload/product/${id}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+
+      setProducts(currentProducts =>
+        currentProducts.map(currentProduct =>
+          currentProduct.id === response.data.id
+            ? response.data
+            : currentProduct,
+        ),
+      );
+      return {id: response.data.id};
+    } catch (error) {
+      console.log(JSON.stringify(error));
+      const errorMessage = ((error as any).response?.data?.msg ||
+        (error as any).response?.data?.errors[0].msg ||
+        'Bad information') as string;
+      return {id: '', message: errorMessage};
+    }
+  };
 
   const loadProductsStatic = useRef(loadProducts);
   const refreshProductsStatic = useRef(refreshProducts);

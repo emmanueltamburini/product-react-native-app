@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -20,25 +20,31 @@ import {useForm} from '../hooks/useForm';
 import {ProductContext} from '../context/ProductContext';
 import {FadeInImage} from '../components/FadeInImage';
 import {TouchableIcon} from '../components/TouchableIcon';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 interface Props extends StackScreenProps<ProductStackParams, 'ProductScreen'> {}
 
 export const ProductScreen = ({navigation, route}: Props) => {
   const {theme} = useContext(ThemeContext);
-  const categoryRef = useRef('');
-
-  const {loadProduct, addProducts, updateProducts, deleteProducts} =
-    useContext(ProductContext);
-  const styles = stylesFunction(theme);
+  const {
+    loadProduct,
+    addProducts,
+    updateProducts,
+    deleteProducts,
+    uploadImage,
+  } = useContext(ProductContext);
 
   const {categories, isLoading} = useCategory();
-
+  const [tempUri, setTempUri] = useState<string>();
   const {id, name, category, image, onChange, setFormValue} = useForm({
     id: route.params.id ? route.params.id : '',
     name: route.params.name ? route.params.name : '',
     category: '',
     image: '',
   });
+
+  const categoryRef = useRef('');
+  const styles = stylesFunction(theme);
 
   const loadCurrentProduct = async () => {
     if (route.params.id) {
@@ -86,6 +92,58 @@ export const ProductScreen = ({navigation, route}: Props) => {
 
       onChange(resp.id, 'id');
     }
+  };
+
+  const takePhoto = () => {
+    launchCamera(
+      {
+        mediaType: 'photo',
+        quality: 0.5,
+      },
+      async resp => {
+        if (resp.didCancel) {
+          return;
+        }
+
+        if (!resp.assets || !resp.assets[0].uri) {
+          return;
+        }
+
+        setTempUri(resp.assets[0].uri);
+
+        const response = await uploadImage(resp, id);
+
+        if (response.message) {
+          Alert.alert('Something was wrong', response.message);
+        }
+      },
+    );
+  };
+
+  const selectPhoto = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        quality: 0.5,
+      },
+      async resp => {
+        if (resp.didCancel) {
+          return;
+        }
+
+        if (!resp.assets || !resp.assets[0].uri) {
+          return;
+        }
+
+        setTempUri(resp.assets[0].uri);
+
+        const response = await uploadImage(resp, id);
+
+        if (response.message) {
+          Alert.alert('Something was wrong', response.message);
+        }
+      },
+    );
   };
 
   const showDeleteAlert = () =>
@@ -194,7 +252,7 @@ export const ProductScreen = ({navigation, route}: Props) => {
                   <Icon name="camera-outline" size={25} color="white" />
                 </View>
               }
-              onPress={() => {}}
+              onPress={takePhoto}
               style={styles.innerButton}
             />
             <View style={styles.spacer} />
@@ -205,15 +263,23 @@ export const ProductScreen = ({navigation, route}: Props) => {
                   <Icon name="albums-outline" size={25} color="white" />
                 </View>
               }
-              onPress={() => {}}
+              onPress={selectPhoto}
               style={styles.innerButton}
             />
           </View>
         )}
 
-        {!!image && (
+        {!!image && !tempUri && (
           <FadeInImage
             uri={image}
+            style={styles.image}
+            containerStyle={styles.imageContainer}
+          />
+        )}
+
+        {!!tempUri && (
+          <FadeInImage
+            uri={tempUri}
             style={styles.image}
             containerStyle={styles.imageContainer}
           />

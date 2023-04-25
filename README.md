@@ -20,3 +20,4 @@ This project use the following dependencies:
 - [React Native Permissions](<https://www.npmjs.com/package/react-native-permissions>)
 - [React Native Async Storage](<https://react-native-async-storage.github.io/async-storage/docs/install/>)
 - [React Native Async Storage](<https://www.npmjs.com/package/@react-native-picker/picker/>)
+- [React Native Image Picker](<https://www.npmjs.com/package/react-native-image-picker>)

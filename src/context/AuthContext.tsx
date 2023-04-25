@@ -67,7 +67,7 @@ export const AuthProvider = ({children}: Props) => {
           });
         }
       } catch (error) {
-        console.log(error);
+        console.log(JSON.stringify(error));
         removeData('token');
         dispatch({type: 'NOT_AUTHENTICATED'});
       }
